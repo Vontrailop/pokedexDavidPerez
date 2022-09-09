@@ -15,19 +15,19 @@
 
 <body>
     
-    <nav class="navbar sticky-top">
+    <div class="  sticky-top">
         <div class="card " >
             <img id="img"class="card-img-top " src="img/Pokeball_icon.png" style="
-            width: 40%; height: 40%; display: block;
+            width: 50%; height: 50%; display: block;
             margin-left: auto;
             margin-right: auto;" alt="Card image cap">
-            <div class="card-body">
-              <h5 id="name" class="card-title">Card title</h5>
-              <p id="ability" class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
-              <a href="#" class="btn btn-primary">Go somewhere</a>
+            <div class="card-body text-center">
+              <h5 id="name" class="card-title">Pokemon</h5>
+              <p id="ability" class="card-text">Habilidades:</p>
+              <!-- <a href="#" class="btn btn-primary">Go somewhere</a> -->
             </div>
           </div>
-    </nav>
+    </div>
 
     <table class="table table-bordered container mb-5 " id="table">
         <thead>
@@ -43,18 +43,24 @@
     </table>
     <nav class="navbar fixed-bottom navbar-light bg-light">
         <button id="prev" class="btn col-5 p-1 btn-success text-center">Prev.</button>
-        <button id="next" onclick="nextPokemon()" class="btn col-5 p-1 btn-warning text-center">Next</button>
+        <button id="next"  class="btn col-5 p-1 btn-warning text-center">Next</button>
     </nav>
 </body>
 
 </html>
 
 <script>
-    fetch('https://pokeapi.co/api/v2/pokemon/')
-    .then(response => response.json())
-    .then(data=> {
-        pokemonList(data);
-    });
+    const nextPokemon = (next)=>{
+        fetch(next)
+        .then(response => response.json())
+        .then(data=>{
+            enlistPokemon(data);
+        });
+    }
+
+    nextPokemon('https://pokeapi.co/api/v2/pokemon/');
+
+    let index = 0;
 
     const consult = (url) =>{
         fetch(url)
@@ -69,21 +75,31 @@
             name.textContent  = data.name;
         });
     }
-    var pokemonList = (data) =>{
+    const enlistPokemon = (data) =>{
         let table = document.getElementById("table");
+        table.innerHTML ="";
         let pokeData = data.results;
+        console.log(data)
         var next=data.next;
-        pokeData.map((pokemon, index )=>{
+        var prev=data.previous;
+        
+        pokeData.map((pokemon)=>{
             table.insertRow(-1).innerHTML = `<td >${index+1}</td><td scope="row">${pokemon.name}</td><td><button class="btn btn-primary" onclick="consult('${pokemon.url}')">Ver</button></td>`;
+            index++;
         });
         let nextBtn = document.getElementById("next");
+        let prevBtn = document.getElementById("prev");
         nextBtn.onclick = ()=>{
-            pokemonList(next);
+            nextPokemon(next);
+        }
+        if(prev != null){
+            prevBtn.onclick = () =>{
+                index=index-20;
+                nextPokemon(prev);
+            }
         }
     }
 
-    const nextPokemon = ()=>{
-        consult(next);
-    }
+   
        
 </script>
